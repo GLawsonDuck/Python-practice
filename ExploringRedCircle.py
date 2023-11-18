@@ -18,6 +18,14 @@ clock = pygame.time.Clock()
 running = True
 dt = 0
 
+class Bounces:
+
+    def __init__(self):
+        self.num_bounces = 0
+
+
+
+
 bounce = 0
 bounced = False
 
