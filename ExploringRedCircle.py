@@ -17,16 +17,22 @@ running = True
 dt = 0
 
 #initial y velocity comes from gravity, y axis is flipped
-gravity = (9.8) * ((720/16.1)) #9.8 m/s * 720 pixels divided by 16.1mm (measured on my screen)
+gravity = (9.8) * ((720/16.1)) #9.8 m/s**2 * 720 pixels divided by 16.1mm (measured on my screen)
 #currently this value is not interacting with the other values I randomly threw in very well, 
 #so I am using 16.1 rather than the 0.0161 the 16.1mm value should be in future
-yvelocity = gravity
+y_accel = gravity #initial acceleration in the y direction at t0 comes purely from gravity
+x_accel = 0 #initial x acceleration is zero
 
 #coefficient of restitution for collisions
-ball_coeff = 0.92
+ball_coeff = 0.712 #taken from a website, this is for a tennis ball
 surface_coeff = 0.98
 
-maxheight = 40 #need this for calculating accel during bounces/falls
+maxheight = (screen.get_height() / 2) #need this for calculating accel during bounces/falls, initial maxheight is init player height
+
+def velocity_calc(init_velocity, **accels):
+    accel = sum(accels)
+    velocity = init_velocity + (accel * dt)
+    return velocity
 
 class Bounces:
 
