@@ -52,15 +52,51 @@ bottom = False
 coiner = pygame.mixer.Sound('coins.wav')
 bouncer = pygame.mixer.Sound('bounce.wav')
 
-wobbler = 1
+wobbler = 0
 
-while len(coins) < 10:
-    x = len(coins)
-    randomx = random.randint(border_left, border_right)
-    randomy = random.randint(border_top, border_bottom)
-    coinvect = pygame.Vector2(randomx, randomy)
-    coins.append(coinvect)
+def GenerateCoins():
 
+    while len(coins) < 15:
+    
+        global coincount
+
+        print('     Generating coin.....')
+    
+        coincoords = []
+
+        for item in coins:
+            coincoords.append([item.x, item.y])
+
+        randomx = random.randint(border_left, border_right)
+        randomy = random.randint(border_top, border_bottom)
+
+        #print('New coin? X =', randomx, 'Y = ', randomy)
+
+        r1 = [randomx - 35, randomx + 35]
+        r2 = [randomy - 35, randomy + 35]
+
+        coinmatch = False
+
+        #print('Testing nearness...')
+
+        if coinmatch == False and len(coins) > 0:
+            for xy in coincoords:
+                #print('Coin location:', xy[0], xy[1])
+                #print('x range:', r1)
+                if xy[0] in range(r1[0], r1[1]):
+                    #print(' x overlap', '\ny range:', r2)
+                    if round(xy[1]) in range(r2[0], r2[1]):
+                        print('xy overlap, coin should NOT be generated \n')
+                        coinmatch = True
+
+        #print('\nMatch:', coinmatch)
+        if coinmatch == False:
+            coinvect = pygame.Vector2(randomx, randomy)
+            coins.append(coinvect)
+            coincount += 1
+            print('coin generated!')
+
+GenerateCoins()
 
 #Game loop
 while running:
@@ -81,6 +117,7 @@ while running:
     #draw in coins and player
     for x in range(len(coins)):
         pygame.draw.circle(screen,(150, 250, 000), coins[x], 10)
+        #GAME_FONT.render_to(screen, (coins[x].x, coins[x].y), ('x = ' + str(round(coins[x].x)) + '\ny = ' + str(round(coins[x].y))), (0, 0, 0))
 
     # collisions and wobble
     for coinpos in coins:
@@ -88,10 +125,15 @@ while running:
             coincircles.append([coinpos[0],coinpos[1], 10, 20]) # x, y, initial radius, repetitions
             pygame.mixer.Sound.play(coiner)
             coins.remove(coinpos)
-            randomx = random.randint(border_left, border_right)
-            randomy = random.randint(border_top, border_bottom)
-            coinvect = pygame.Vector2(randomx, randomy)
-            coins.append(coinvect)
+            GenerateCoins()
+            # generate coin avoiding overlap:
+
+
+
+            #randomx = random.randint(border_left, border_right)
+            #randomy = random.randint(border_top, border_bottom)
+            #coinvect = pygame.Vector2(randomx, randomy)
+            #coins.append(coinvect)
 
         wobble = math.sin(wobbler)
         coinpos[1] += wobble
@@ -177,7 +219,7 @@ while running:
         ball.velocity.y = -(ball.velocity.y) * ball.coeff
         if ball.unsup_height > 0.9:
             pygame.mixer.Sound.play(bouncer)
-            print(ball.unsup_height)
+            #print(ball.unsup_height)
 
     if border_top >= ball.pos.y:
         ball.pos.y = border_top + 1
@@ -213,7 +255,7 @@ while running:
         bottom = True
 
     if bottom:
-        print("bottom")
+        pass #print("bottom")
 
     # flip() the display to put your work on screen
     pygame.display.flip()
